@@ -4,6 +4,7 @@
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans+Mono" />
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
     <title>Online RISC-V Assembler</title>
     <style>
         #container {
@@ -90,15 +91,25 @@
             max-height: 300px;
             overflow:  auto;
         }
+        #content {
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <a class="github-fork-ribbon" href="https://github.com/racerxdl/riscv-online-asm" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
     <nav class="light-blue lighten-1" role="navigation">
         <div class="nav-wrapper container">
             <a href="#" class="brand-logo">RISC-V Online Assembler</a>
         </div>
     </nav>
-    <div class="container">
+    <div class="container" id="loading">
+        <p>Please wait while everything is loading</p>
+        <div class="progress">
+            <div class="indeterminate"></div>
+        </div>
+    </div>
+    <div class="container" id="content">
         <div class="row">
           <div class="col s12">
             <p>Type the assembly code below and click <b>Build</b></p>
@@ -138,6 +149,9 @@
     <script data-main="js/app" src="js/require.js" async></script>
     <script type="text/javascript" src="js/materialize.min.js" async></script>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="  crossorigin="anonymous"></script>
+    <link rel="preload" href="js/as-new.wasm" as="fetch">
+    <link rel="preload" href="js/objcopy.wasm" as="fetch">
+    <link rel="preload" href="js/objdump.wasm" as="fetch">
     <script>
         $( document ).ready(() => {
             $('i[rel="pre"]').replaceWith(function() {
@@ -153,6 +167,8 @@
                 selection.addRange(range);
               }, false);
             }
+            $('#loading').hide();
+            $('#content').show();
         })
     </script>
 </body>

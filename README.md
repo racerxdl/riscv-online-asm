@@ -4,7 +4,7 @@ This is a very crude online assembler for RISC-V assembly (all variants that gas
 
 It uses a webassembly compiled version of gnu as, objdump and objcopy to build the assembly.
 
-It has been done REALLY quick for my RISC-V Emulator series (currently only in portuguese at [https://www.youtube.com/playlist?list=PLEP_M2UAh9q6_2Jtvs9fgOVlRgsruii2m](https://www.youtube.com/playlist?list=PLEP_M2UAh9q6_2Jtvs9fgOVlRgsruii2m))
+It has been done REALLY quick (probably less than 2h) for my RISC-V Emulator series (currently only in portuguese at [https://www.youtube.com/playlist?list=PLEP_M2UAh9q6_2Jtvs9fgOVlRgsruii2m](https://www.youtube.com/playlist?list=PLEP_M2UAh9q6_2Jtvs9fgOVlRgsruii2m))
 
 ### Compiling binutils
 
