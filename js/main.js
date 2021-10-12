@@ -141,10 +141,9 @@ async function doAssemble(code) {
   }
 }
 
-async function buildStuff() {
+async function buildStuff(code) {
   try {
     $("#building").show();
-    const code = $("#sourceCodeBox").val();
     const l = await doAssemble(code);
     $("#binaryBox").html(l.hex);
     $("#objDumpBox").html(l.data);

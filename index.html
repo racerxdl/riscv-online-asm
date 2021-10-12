@@ -68,7 +68,7 @@ _boot:                    /* x0  = 0    0x000 */
                     </textarea>
                 </div>
             </form>
-            <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff()">Build</a></div>
+            <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff(window.editor.getValue())">Build</a></div>
             <div class="container" id="building">
                 <p>Please wait while building</p>
                 <div class="progress">
@@ -111,7 +111,7 @@ _boot:                    /* x0  = 0    0x000 */
             }
             $('#loading').hide();
             $('#content').show();
-            var editor = CodeMirror.fromTextArea(document.getElementById('sourceCodeBox'), {
+            window.editor = CodeMirror.fromTextArea(document.getElementById('sourceCodeBox'), {
                 lineNumbers: true,
                 theme:"dracula",
                 mode: {name: "gas", architecture: "riscv"},
