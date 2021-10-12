@@ -1,0 +1,159 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans+Mono" />
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <title>Online RISC-V Assembler</title>
+    <style>
+        #container {
+          padding:5%;
+          margin:0 auto;
+        }
+        body {
+            font-family: "Droid Sans";
+            background:#eee;
+            padding:0;
+            margin:0;
+        }
+        textarea {
+            font-family: "Droid Sans Mono";
+            font-variant: monospace;
+        }
+
+        /* CSS Simple Pre Code */
+        pre {
+            background: #333;
+            white-space: pre;
+            word-wrap: break-word;
+            overflow: auto;
+        }
+
+        pre.code {
+            margin: 20px 25px;
+            border-radius: 4px;
+            border: 1px solid #292929;
+            position: relative;
+        }
+
+        pre.code label {
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 13px;
+            color: #ddd;
+            position: absolute;
+            left: 1px;
+            top: 15px;
+            text-align: center;
+            width: 100px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            pointer-events: none;
+        }
+
+        pre.code code {
+            font-family: "Droid Sans Mono";
+            display: block;
+            margin: 0 0 0 100px;
+            padding: 15px 16px 14px;
+            border-left: 1px solid #555;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 19px;
+            color: #ddd;
+        }
+
+        pre::after {
+            content: "double click to selection";
+            padding: 0;
+            width: auto;
+            height: auto;
+            position: absolute;
+            right: 18px;
+            top: 14px;
+            font-size: 12px;
+            color: #ddd;
+            line-height: 20px;
+            overflow: hidden;
+            -webkit-backface-visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        pre:hover::after {
+            opacity: 0;
+            visibility: visible;
+        }
+
+        pre.code-res code {
+            color: #4dd0e1;
+            max-height: 300px;
+            overflow:  auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="light-blue lighten-1" role="navigation">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo">RISC-V Online Assembler</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+          <div class="col s12">
+            <p>Type the assembly code below and click <b>Build</b></p>
+            <BR/>
+            <form>
+                <div class="input-field">
+                    <textarea id="sourceCodeBox" class="materialize-textarea">
+                        .global _boot
+                        .text
+
+                        _boot:                /* x0  = 0    0x000 */
+                        /* Test ADDI */
+                        addi x1 , x0,   1000  /* x1  = 1000 0x3E8 */
+                        addi x2 , x1,   2000  /* x2  = 3000 0xBB8 */
+                        addi x3 , x2,  -1000  /* x3  = 2000 0x7D0 */
+                        addi x4 , x3,  -2000  /* x4  = 0    0x000 */
+                        addi x5 , x4,   1000  /* x5  = 1000 0x3E8 */
+
+                    </textarea>
+                    <label for="sourceCodeBox">RISC-V Assembly Code</label>
+                </div>
+            </form>
+            <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff()">Build</a></div>
+            <pre class="code code-res"><label>Console</label><code id="output">Waiting for build</code></pre>
+            <div class="divider"></div>
+            <p>
+                <pre class="code code-res"><label>Hex Dump</label><code id="binaryBox">Waiting for build</code></pre>
+                <div class="divider"></div>
+                <pre class="code code-res"><label>Objdump</label><code id="objDumpBox">Waiting for build</code></pre>
+                <div class="divider"></div>
+            </p>
+          </div>
+        </div>
+    </div>
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script data-main="js/app" src="js/require.js" async></script>
+    <script type="text/javascript" src="js/materialize.min.js" async></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="  crossorigin="anonymous"></script>
+    <script>
+        $( document ).ready(() => {
+            $('i[rel="pre"]').replaceWith(function() {
+                return $('<pre><code>' + $(this).html() + '</code></pre>');
+            });
+            var pres = document.querySelectorAll('pre,kbd,blockquote');
+            for (var i = 0; i < pres.length; i++) {
+              pres[i].addEventListener("dblclick", function () {
+                var selection = getSelection();
+                var range = document.createRange();
+                range.selectNodeContents(this);
+                selection.removeAllRanges();
+                selection.addRange(range);
+              }, false);
+            }
+        })
+    </script>
+</body>
+</html>
