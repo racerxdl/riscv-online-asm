@@ -54,8 +54,7 @@
             <BR/>
             <form>
                 <div class="input-field">
-                    <textarea id="sourceCodeBox">
-.global _boot
+                    <textarea id="sourceCodeBox">.global _boot
 .text
 
 _boot:                    /* x0  = 0    0x000 */
@@ -65,7 +64,7 @@ _boot:                    /* x0  = 0    0x000 */
     addi x3 , x2,  -1000  /* x3  = 2000 0x7D0 */
     addi x4 , x3,  -2000  /* x4  = 0    0x000 */
     addi x5 , x4,   1000  /* x5  = 1000 0x3E8 */
-                    </textarea>
+</textarea>
                 </div>
             </form>
             <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff(window.editor.getValue())">Build</a></div>
