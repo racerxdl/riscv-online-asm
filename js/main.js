@@ -143,14 +143,16 @@ async function doAssemble(code) {
 
 async function buildStuff() {
   try {
-    const code = document.getElementById('sourceCodeBox').value;
+    $("#building").show();
+    const code = $("#sourceCodeBox").val();
     const l = await doAssemble(code);
-    document.getElementById('binaryBox').innerHTML = l.hex;
-    document.getElementById('objDumpBox').innerHTML = l.data;
-    document.getElementById('output').innerHTML = '<span style="color: green">OK!</span>';
+    $("#binaryBox").html(l.hex);
+    $("#objDumpBox").html(l.data);
+    $("#output").html('<span style="color: green">OK!</span>');
   } catch(e) {
-    document.getElementById('output').innerHTML = `<span style="color: red">${e}</span>`;
+    $("#output").html(`<span style="color: red">${e}</span>`);
   }
+  $("#building").hide();
 }
 
 async function main(require) {

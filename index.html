@@ -94,6 +94,9 @@
         #content {
             display: none;
         }
+        #building {
+            display: none;
+        }
     </style>
     <!-- Global -->
     <link rel="canonical" href="https://riscvasm.lucasteske.dev/">
@@ -155,6 +158,12 @@
                 </div>
             </form>
             <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff()">Build</a></div>
+            <div class="container" id="building">
+                <p>Please wait while building</p>
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+            </div>
             <pre class="code code-res"><label>Console</label><code id="output">Waiting for build</code></pre>
             <div class="divider"></div>
             <p>
@@ -171,9 +180,9 @@
     <script data-main="js/app" src="js/require.js" async></script>
     <script type="text/javascript" src="js/materialize.min.js" async></script>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
-    <link rel="preload" href="js/as-new.wasm" as="fetch" crossorigin="anonymous">
-    <link rel="preload" href="js/objcopy.wasm" as="fetch" crossorigin="anonymous">
-    <link rel="preload" href="js/objdump.wasm" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="js/as-new.wasm" as="script" crossorigin="anonymous">
+    <link rel="preload" href="js/objcopy.wasm" as="script" crossorigin="anonymous">
+    <link rel="preload" href="js/objdump.wasm" as="script" crossorigin="anonymous">
     <script>
         $( document ).ready(() => {
             $('i[rel="pre"]').replaceWith(function() {
