@@ -56,22 +56,6 @@ pre.code code {
     color: #ddd;
 }
 
-pre::after {
-    content: "double click to selection";
-    padding: 0;
-    width: auto;
-    height: auto;
-    position: absolute;
-    right: 18px;
-    top: 14px;
-    font-size: 12px;
-    color: #ddd;
-    line-height: 20px;
-    overflow: hidden;
-    -webkit-backface-visibility: hidden;
-    transition: all 0.3s ease;
-}
-
 pre:hover::after {
     opacity: 0;
     visibility: visible;
