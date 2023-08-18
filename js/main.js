@@ -110,12 +110,19 @@ function selectBinaryBox() {
 function bufferToHex(buff) {
   const dataview = new DataView(buff.buffer);
   let hexString = '';
-  const hexOcts = (buff.byteLength / 4) >>> 0;
-  for (let i = 0; i < hexOcts; i++) {
-    const v = dataview.getInt32(i*4, true) >>> 0;
-    hexString += v.toString(16).padStart(8, '0') + "\n"
+  const hexBytes = buff.byteLength >>> 0;
+  for (let i = 0; i < hexBytes; i++) {
+    const v = dataview.getUint8(i, true) >>> 0;
+    hexString += v.toString(16).padStart(2, '0')
+    if (((i + 1) % 16) === 0) {
+      hexString += '\n';
+    } else if (((i + 1) % 8) === 0) {
+      hexString += "  ";
+    } else {
+      hexString += ' ';
+    }
   }
-  return hexString;
+  return hexString.trimEnd();
 }
 
 function _arrayBufferToBase64( buffer ) {
