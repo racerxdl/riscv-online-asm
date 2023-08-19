@@ -49,9 +49,8 @@
     </div>
     <div class="container" id="content">
         <div class="row">
-          <div class="col s12">
+          <div class="col s6">
             <p>Type the assembly code below and click <b>Build</b></p>
-            <BR/>
             <form>
                 <div class="input-field">
                     <textarea id="sourceCodeBox">.global _boot
@@ -64,10 +63,73 @@ _boot:                    /* x0  = 0    0x000 */
     addi x3 , x2,  -1000  /* x3  = 2000 0x7D0 */
     addi x4 , x3,  -2000  /* x4  = 0    0x000 */
     addi x5 , x4,   1000  /* x5  = 1000 0x3E8 */
-</textarea>
+
+    la x6, variable
+    addi x6, x6, 4
+
+.data
+variable:
+	.word 0xdeadbeef
+                    </textarea>
                 </div>
             </form>
-            <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff(window.editor.getValue())">Build</a></div>
+          </div>
+          <div class="col s6">
+                <p>Linker Script</b></p>
+                <form>
+                    <div class="input-field">
+                        <textarea id="linkerCodeBox">/* Thanks https://github.com/darklife/darkriscv */
+  __heap_size    = 0x200;  /* required amount of heap */
+  __stack_size  = 0x800;  /* required amount of stack */
+
+  MEMORY
+  {
+    ROM (rwx) : ORIGIN = 0x00000000, LENGTH = 0x10000
+    RAM (rwx) : ORIGIN = 0x00010000, LENGTH = 0x08000
+  }
+  SECTIONS
+  {
+    .text :
+    {
+      *(.boot)
+      *(.text)
+      *(.text)
+      *(.rodata*)
+    } > ROM
+    .data :
+    {
+      *(.sbss)
+      *(.data)
+      *(.bss)
+      *(.rela*)
+      *(COMMON)
+    } > RAM
+
+    .heap :
+    {
+      . = ALIGN(4);
+      PROVIDE ( end = . );
+      _sheap = .;
+      . = . + __heap_size;
+      . = ALIGN(4);
+      _eheap = .;
+    } >RAM
+
+    .stack :
+    {
+      . = ALIGN(4);
+      _estack = .;
+      . = . + __stack_size;
+      . = ALIGN(4);
+      _sstack = .;
+    } >RAM
+  }
+                        </textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff(window.editor.getValue(), window.ldeditor.getValue())">Build</a></div>
             <div class="container" id="building">
                 <p>Please wait while building</p>
                 <div class="progress">
@@ -77,9 +139,13 @@ _boot:                    /* x0  = 0    0x000 */
             <pre class="code code-res"><label>Console</label><code id="output">Waiting for build</code></pre>
             <div class="divider"></div>
             <p>
-                <pre class="code code-res"><label>Hex Dump</label><code id="binaryBox">Waiting for build</code></pre>
+                <pre class="code code-res"><label>Code<BR/>Hex Dump</label><code id="binaryBox">Waiting for build</code></pre>
                 <div class="divider"></div>
-                <pre class="code code-res"><label>Objdump</label><code id="objDumpBox">Waiting for build</code></pre>
+                <pre class="code code-res"><label>Data<BR/>Hex Dump</label><code id="binaryDataBox">Waiting for build</code></pre>
+                <div class="divider"></div>
+                <pre class="code code-res"><label>Objdump Code<BR/>Disassembly</label><code id="objDumpBox">Waiting for build</code></pre>
+                <div class="divider"></div>
+                <pre class="code code-res"><label>Objdump<BR/>Full Hex</label><code id="objDumpFullBox">Waiting for build</code></pre>
                 <div class="divider"></div>
             </p>
           </div>
@@ -93,6 +159,7 @@ _boot:                    /* x0  = 0    0x000 */
     <link rel="preload" href="js/as-new.wasm" as="script" crossorigin="anonymous">
     <link rel="preload" href="js/objcopy.wasm" as="script" crossorigin="anonymous">
     <link rel="preload" href="js/objdump.wasm" as="script" crossorigin="anonymous">
+    <link rel="preload" href="js/ld-new.wasm" as="script" crossorigin="anonymous">
     <script>
         $( document ).ready(() => {
             $('i[rel="pre"]').replaceWith(function() {
@@ -111,6 +178,11 @@ _boot:                    /* x0  = 0    0x000 */
             $('#loading').hide();
             $('#content').show();
             window.editor = CodeMirror.fromTextArea(document.getElementById('sourceCodeBox'), {
+                lineNumbers: true,
+                theme:"dracula",
+                mode: {name: "gas", architecture: "riscv"},
+            });
+            window.ldeditor = CodeMirror.fromTextArea(document.getElementById('linkerCodeBox'), {
                 lineNumbers: true,
                 theme:"dracula",
                 mode: {name: "gas", architecture: "riscv"},
