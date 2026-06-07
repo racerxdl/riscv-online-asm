@@ -1,75 +1,414 @@
-#container {
-  padding:5%;
-  margin:0 auto;
-}
-body {
-    font-family: "Droid Sans";
-    background:#eee;
-    padding:0;
-    margin:0;
-}
-textarea {
-    font-family: "Droid Sans Mono";
-    font-variant: monospace;
+:root {
+    --bg: #0b1016;
+    --bg-elevated: #121a23;
+    --bg-panel: rgba(18, 26, 35, 0.92);
+    --border: rgba(124, 176, 193, 0.24);
+    --border-strong: rgba(80, 227, 194, 0.42);
+    --text: #e8f1f7;
+    --text-muted: #94a9b5;
+    --accent: #50e3c2;
+    --accent-soft: #7cb0c1;
+    --danger: #ff6262;
+    --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
-/* CSS Simple Pre Code */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    font-family: "Droid Sans", sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(80, 227, 194, 0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(124, 176, 193, 0.10), transparent 24%),
+        linear-gradient(180deg, #0c1219 0%, #0b1016 100%);
+    color: var(--text);
+    padding: 0;
+    margin: 0;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(80, 227, 194, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(80, 227, 194, 0.03) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.55;
+}
+
+a {
+    color: inherit;
+}
+
+textarea,
+pre.code code {
+    font-family: "Droid Sans Mono", monospace;
+}
+
+.page-shell {
+    position: relative;
+    z-index: 1;
+    padding: 40px 0 56px;
+}
+
+#loading {
+    max-width: 720px;
+    margin-top: 12vh;
+    color: var(--text);
+}
+
+#loading p {
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+#content {
+    display: none;
+    width: min(1400px, calc(100vw - 32px));
+}
+
+.hero-panel,
+.panel,
+.build-panel,
+pre.code {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.hero-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 24px;
+    padding: 28px 30px;
+    border-radius: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(80, 227, 194, 0.04) 50%, transparent 100%);
+    pointer-events: none;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 11px;
+}
+
+.hero-panel h1 {
+    margin: 0;
+    font-family: "Orbitron", "Droid Sans", sans-serif;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+}
+
+.hero-copy {
+    margin: 14px 0 0;
+    max-width: 760px;
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.hero-status {
+    display: grid;
+    gap: 14px;
+    align-content: start;
+}
+
+.status-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    background: rgba(11, 16, 22, 0.55);
+}
+
+.status-label {
+    display: block;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.status-value {
+    display: block;
+    color: var(--text);
+    font-family: "Droid Sans Mono", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.panel {
+    border-radius: 22px;
+    padding: 22px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-family: "Orbitron", "Droid Sans", sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+}
+
+.panel-header p {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.editor-field {
+    margin: 0;
+}
+
+.CodeMirror {
+    height: 560px;
+    border-radius: 16px;
+    border: 1px solid rgba(124, 176, 193, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 26px 0 18px;
+    padding: 18px 22px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: rgba(11, 16, 22, 0.72);
+}
+
+.action-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.action-copy strong {
+    font-family: "Orbitron", "Droid Sans", sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.action-copy span {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.build-btn.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+    height: 50px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent) 0%, #2ed3ff 100%);
+    color: #041015;
+    font-family: "Orbitron", "Droid Sans", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    box-shadow: 0 12px 32px rgba(80, 227, 194, 0.25);
+}
+
+.build-btn.btn:hover,
+.build-btn.btn:focus {
+    background: linear-gradient(135deg, #7af6dc 0%, #63deff 100%);
+}
+
+#building {
+    display: none;
+    margin: 0 0 18px;
+    border-radius: 18px;
+    padding: 18px 22px;
+}
+
+#building p {
+    margin: 0 0 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+}
+
+.progress {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.progress .indeterminate {
+    background: linear-gradient(90deg, var(--accent), #2ed3ff);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
 pre {
-    background: #333;
     white-space: pre;
     word-wrap: break-word;
     overflow: auto;
 }
 
 pre.code {
-    margin: 20px 25px;
-    border-radius: 4px;
-    border: 1px solid #292929;
+    margin: 0;
+    border-radius: 20px;
     position: relative;
+    min-height: 220px;
 }
 
 pre.code label {
-    font-family: sans-serif;
-    font-weight: bold;
-    font-size: 13px;
-    color: #ddd;
+    font-family: "Orbitron", "Droid Sans", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--accent-soft);
     position: absolute;
-    left: 1px;
-    top: 15px;
-    text-align: center;
-    width: 100px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    left: 0;
+    top: 0;
+    width: 128px;
+    height: 100%;
+    padding: 22px 14px;
+    line-height: 1.5;
+    text-transform: uppercase;
+    border-right: 1px solid rgba(124, 176, 193, 0.14);
+    user-select: none;
     pointer-events: none;
 }
 
 pre.code code {
-    font-family: "Droid Sans Mono";
     display: block;
-    margin: 0 0 0 100px;
-    padding: 15px 16px 14px;
-    border-left: 1px solid #555;
+    margin: 0 0 0 128px;
+    padding: 20px 22px;
     overflow-x: auto;
     font-size: 13px;
-    line-height: 19px;
-    color: #ddd;
-}
-
-pre:hover::after {
-    opacity: 0;
-    visibility: visible;
+    line-height: 1.6;
+    color: #d7f7ff;
 }
 
 pre.code-res code {
-    color: #4dd0e1;
-    min-height: 100px;
-    max-height: 300px;
-    overflow:  auto;
+    min-height: 220px;
+    max-height: 420px;
+    overflow: auto;
 }
+
+.compact-result {
+    min-height: 260px;
+}
+
+.wide-result {
+    grid-column: 1 / -1;
+}
+
+#output {
+    color: var(--accent);
+}
+
 #content {
     display: none;
 }
-#building {
-    display: none;
+
+@media (max-width: 1100px) {
+    .hero-panel,
+    .workspace-grid,
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .CodeMirror {
+        height: 440px;
+    }
+}
+
+@media (max-width: 720px) {
+    .page-shell {
+        padding: 20px 0 36px;
+    }
+
+    #content {
+        width: min(100vw - 16px, 1400px);
+    }
+
+    .hero-panel,
+    .panel,
+    .action-row,
+    #building,
+    pre.code {
+        border-radius: 18px;
+    }
+
+    .hero-panel,
+    .panel,
+    .action-row,
+    #building {
+        padding: 18px;
+    }
+
+    .action-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .build-btn.btn {
+        width: 100%;
+    }
+
+    pre.code {
+        min-height: 0;
+    }
+
+    pre.code label {
+        position: static;
+        display: block;
+        width: auto;
+        height: auto;
+        padding: 16px 18px 0;
+        border-right: 0;
+    }
+
+    pre.code code {
+        margin: 0;
+        padding: 14px 18px 18px;
+    }
+
+    .CodeMirror {
+        height: 360px;
+    }
 }

@@ -1,8 +1,12 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans+Mono" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&display=swap">
     <link rel="stylesheet" type="text/css" href="css/materialize.min.css" media="screen,projection"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
     <link rel="stylesheet" type="text/css" href="css/page.css" />
@@ -36,11 +40,7 @@
 </head>
 <body>
     <a class="github-fork-ribbon" href="https://github.com/racerxdl/riscv-online-asm" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
-    <nav class="light-blue lighten-1" role="navigation">
-        <div class="nav-wrapper container">
-            <a href="#" class="brand-logo">RISC-V Online Assembler</a>
-        </div>
-    </nav>
+    <div class="page-shell">
     <div class="container" id="loading">
         <p>Please wait while everything is loading</p>
         <div class="progress">
@@ -48,11 +48,33 @@
         </div>
     </div>
     <div class="container" id="content">
-        <div class="row">
-          <div class="col s6">
-            <p>Type the assembly code below and click <b>Build</b></p>
+        <header class="hero-panel">
+            <div>
+                <p class="eyebrow">Teske Lab · Tooling</p>
+                <h1>RISC-V Online Assembler</h1>
+                <p class="hero-copy">Assemble, link, inspect sections, and extract text/data binaries directly in the browser using a WebAssembly build of GNU binutils.</p>
+            </div>
+            <div class="hero-status">
+                <div class="status-card">
+                    <span class="status-label">Pipeline</span>
+                    <span class="status-value">gas → ld → objdump → objcopy</span>
+                </div>
+                <div class="status-card">
+                    <span class="status-label">Target</span>
+                    <span class="status-value">riscv64-linux-gnu</span>
+                </div>
+            </div>
+        </header>
+        <div class="workspace-grid">
+          <section class="panel editor-panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Assembly</h2>
+                    <p>Type or paste RISC-V source to assemble.</p>
+                </div>
+            </div>
             <form>
-                <div class="input-field">
+                <div class="input-field editor-field">
                     <textarea id="sourceCodeBox">.global _boot
 .text
 
@@ -73,11 +95,16 @@ variable:
                     </textarea>
                 </div>
             </form>
-          </div>
-          <div class="col s6">
-                <p>Linker Script</b></p>
+          </section>
+          <section class="panel editor-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Linker Script</h2>
+                        <p>Control memory layout and output addresses.</p>
+                    </div>
+                </div>
                 <form>
-                    <div class="input-field">
+                    <div class="input-field editor-field">
                         <textarea id="linkerCodeBox">/* Thanks https://github.com/darklife/darkriscv */
   __heap_size    = 0x200;  /* required amount of heap */
   __stack_size  = 0x800;  /* required amount of stack */
@@ -127,29 +154,30 @@ variable:
                         </textarea>
                     </div>
                 </form>
-            </div>
+          </section>
         </div>
-        <div style="text-align: center"><a href="#" class="btn" onClick="buildStuff(window.editor.getValue(), window.ldeditor.getValue())">Build</a></div>
-            <div class="container" id="building">
+        <div class="action-row">
+            <div class="action-copy">
+                <strong>Build current workspace</strong>
+                <span>Runs the full browser-side toolchain and refreshes all result panes below.</span>
+            </div>
+            <a href="#" class="btn build-btn" onClick="buildStuff(window.editor.getValue(), window.ldeditor.getValue())">Build</a>
+        </div>
+            <div class="container panel build-panel" id="building">
                 <p>Please wait while building</p>
                 <div class="progress">
                     <div class="indeterminate"></div>
                 </div>
             </div>
-            <pre class="code code-res"><label>Console</label><code id="output">Waiting for build</code></pre>
-            <div class="divider"></div>
-            <p>
-                <pre class="code code-res"><label>Code<BR/>Hex Dump</label><code id="binaryBox">Waiting for build</code></pre>
-                <div class="divider"></div>
-                <pre class="code code-res"><label>Data<BR/>Hex Dump</label><code id="binaryDataBox">Waiting for build</code></pre>
-                <div class="divider"></div>
-                <pre class="code code-res"><label>Objdump Code<BR/>Disassembly</label><code id="objDumpBox">Waiting for build</code></pre>
-                <div class="divider"></div>
-                <pre class="code code-res"><label>Objdump<BR/>Full Hex</label><code id="objDumpFullBox">Waiting for build</code></pre>
-                <div class="divider"></div>
-            </p>
+            <div class="results-grid">
+                <pre class="code code-res"><label>Console</label><code id="output">Waiting for build</code></pre>
+                <pre class="code code-res compact-result"><label>Code<BR/>Hex Dump</label><code id="binaryBox">Waiting for build</code></pre>
+                <pre class="code code-res compact-result"><label>Data<BR/>Hex Dump</label><code id="binaryDataBox">Waiting for build</code></pre>
+                <pre class="code code-res wide-result"><label>Objdump Code<BR/>Disassembly</label><code id="objDumpBox">Waiting for build</code></pre>
+                <pre class="code code-res wide-result"><label>Objdump<BR/>Full Hex</label><code id="objDumpFullBox">Waiting for build</code></pre>
+            </div>
           </div>
-        </div>
+    </div>
     </div>
 
     <!--JavaScript at end of body for optimized loading-->
