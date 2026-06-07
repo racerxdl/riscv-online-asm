@@ -101,7 +101,11 @@
                 </label>
                 <label class="control-field control-field-wide">
                     <span>Advanced extensions</span>
-                    <input id="archExtra" type="text" placeholder="zba zbb zicsr" autocomplete="off" oninput="updateAssemblerPreview()">
+                    <input id="archExtra" type="text" placeholder="e.g. zba zbb" autocomplete="off" oninput="updateAssemblerPreview()">
+                </label>
+                <label class="control-field control-field-wide">
+                    <span>Custom assembler flags</span>
+                    <input id="archCustomFlags" type="text" placeholder="e.g. -g --gdwarf-5" autocomplete="off" oninput="updateAssemblerPreview()">
                 </label>
                 <div class="toggle-group">
                     <label class="toggle-chip">

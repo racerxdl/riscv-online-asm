@@ -73,6 +73,7 @@ function getAssemblerSettings() {
   const baseIsa = document.getElementById("archBase")?.value || "rv64gc";
   const abi = document.getElementById("archAbi")?.value || "lp64d";
   const extraText = document.getElementById("archExtra")?.value || "";
+  const customFlags = document.getElementById("archCustomFlags")?.value?.trim() || "";
   const toggledExtensions = [];
 
   if (document.getElementById("extHypervisor")?.checked) {
@@ -86,6 +87,7 @@ function getAssemblerSettings() {
   return {
     march: buildMarch(baseIsa, toggledExtensions, extraText),
     abi,
+    customFlags,
   };
 }
 
@@ -96,17 +98,23 @@ function updateAssemblerPreview() {
   }
 
   const settings = getAssemblerSettings();
-  preview.textContent = `-march=${settings.march} -mabi=${settings.abi}`;
+  let text = `-march=${settings.march} -mabi=${settings.abi}`;
+  if (settings.customFlags) {
+    text += ` ${settings.customFlags}`;
+  }
+  preview.textContent = text;
 }
 
 function getAssemblerArgs(sourceFile, outputFile, settings) {
-  return [
+  const args = [
     `-march=${settings.march}`,
     `-mabi=${settings.abi}`,
-    sourceFile,
-    "-o",
-    outputFile,
   ];
+  if (settings.customFlags) {
+    args.push(...settings.customFlags.split(/\s+/).filter(Boolean));
+  }
+  args.push(sourceFile, "-o", outputFile);
+  return args;
 }
 
 async function assemble(code, settings) {
@@ -377,7 +385,7 @@ async function main(require) {
     }
   });
 
-  ["archBase", "archAbi", "archExtra", "extHypervisor", "extVector"].forEach((id) => {
+  ["archBase", "archAbi", "archExtra", "archCustomFlags", "extHypervisor", "extVector"].forEach((id) => {
     document.getElementById(id)?.addEventListener('input', updateAssemblerPreview);
     document.getElementById(id)?.addEventListener('change', updateAssemblerPreview);
   });
