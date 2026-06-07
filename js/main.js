@@ -1,188 +1,146 @@
+function withModuleDefaults(env) {
+  return {
+    locateFile: (path) => `js/${path}`,
+    ...env,
+  };
+}
+
 async function callAS(env) {
-  return new Promise((resolve) => {
-    require(['./riscv64-linux-gnu-as'], (Module) => {
-      resolve(Module(env));
-    });
-  })
+  const Module = await new Promise((resolve, reject) => {
+    require(['./riscv64-linux-gnu-as'], resolve, reject);
+  });
+  return Module(withModuleDefaults(env));
 }
 async function callObjdump(env) {
-  return new Promise((resolve) => {
-    require(['./riscv64-linux-gnu-objdump'], (Module) => {
-      resolve(Module(env));
-    });
-  })
+  const Module = await new Promise((resolve, reject) => {
+    require(['./riscv64-linux-gnu-objdump'], resolve, reject);
+  });
+  return Module(withModuleDefaults(env));
 }
 async function callObjcopy(env) {
-  return new Promise((resolve) => {
-    require(['./riscv64-linux-gnu-objcopy'], (Module) => {
-      resolve(Module(env));
-    });
-  })
+  const Module = await new Promise((resolve, reject) => {
+    require(['./riscv64-linux-gnu-objcopy'], resolve, reject);
+  });
+  return Module(withModuleDefaults(env));
 }
 async function callLd(env) {
-  return new Promise((resolve) => {
-    require(['./riscv64-linux-gnu-ld'], (Module) => {
-      resolve(Module(env));
-    });
-  })
+  const Module = await new Promise((resolve, reject) => {
+    require(['./riscv64-linux-gnu-ld'], resolve, reject);
+  });
+  return Module(withModuleDefaults(env));
 }
 
 async function assemble(code) {
   console.log(`Assembling:\n${code}`);
-  return new Promise((resolve, reject) => {
-    const env = {}
-    env.preRun = [(m) => m.FS.writeFile("file.s", code)];
-    let out = "";
-    env.print = (data) => {
-        out += data + "\n";
-    }
-    env.printErr = (data) => {
-      out += data + "\n";
-    }
-    let error = false;
-    env.quit = (code, err)=>{
-      if (env.quit && code !== 0) {
-        error = true;
-      }
-      env.quit = null;
-    };
-    env.postRun = [
-      async (m) => {
-        console.log(`Assembled:\n${out}`);
-        if (!error) {
-          const data = await m.FS.readFile("file.o")
-          resolve(data)
-        } else {
-          reject(out);
-        }
-      }
-    ]
-    env.arguments = ["file.s", "-o","file.o"]
-    callAS(env)
-  })
+  const env = { noInitialRun: true };
+  let out = "";
+  env.print = (data) => { out += data + "\n"; };
+  env.printErr = (data) => { out += data + "\n"; };
+
+  const m = await callAS(env);
+  m.FS.writeFile("file.s", code);
+
+  try {
+    m.callMain(["file.s", "-o", "file.o"]);
+  } catch(e) {
+    throw out || e;
+  }
+
+  console.log(`Assembled:\n${out}`);
+
+  try {
+    return m.FS.readFile("file.o");
+  } catch(e) {
+    throw out || e;
+  }
 }
 
 async function link(object, ldscript) {
   console.log(`Linking:\n${bufferToHex(object).replace("\n","")} with ${ldscript}`);
-  return new Promise((resolve, reject) => {
-    const env = {}
-    env.preRun = [
-       (m) => {
-        m.FS.writeFile("file.ld", ldscript)
-      },
-      (m) => {
-        m.FS.writeFile("data.o", object)
-      }
-    ];
-    let error = false;
-    env.quit = (code, err)=>{
-      if (env.quit && code !== 0) {
-        error = true;
-      }
-      env.quit = null;
-    };
-    let out = "";
-    env.print = (data) => {
-        out += data + "\n";
-    }
-    env.printErr = (data) => {
-      out += data + "\n";
-    }
-    env.postRun = [
-      async (m) => {
-        if (!error) {
-          const data = await m.FS.readFile("file.elf")
-          resolve(data)
-        } else {
-          reject(`LD: ${out}`);
-        }
-      }
-    ]
-    env.arguments = ["-T", "file.ld", "data.o", "-o", "file.elf"]
-    callLd(env)
-  })
+  const env = { noInitialRun: true };
+  let out = "";
+  env.print = (data) => { out += data + "\n"; };
+  env.printErr = (data) => { out += data + "\n"; };
+
+  const m = await callLd(env);
+  m.FS.writeFile("file.ld", ldscript);
+  m.FS.writeFile("data.o", object);
+
+  try {
+    m.callMain(["-T", "file.ld", "data.o", "-o", "file.elf"]);
+  } catch(e) {
+    throw `LD: ${out}`;
+  }
+
+  try {
+    return m.FS.readFile("file.elf");
+  } catch(e) {
+    throw `LD: ${out}`;
+  }
 }
 
 async function dump(elf) {
-  return new Promise((resolve) => {
-    const env = {}
-    env.preRun = [
-      (m) => {
-        m.FS.writeFile("file.elf", elf)
-      }
-    ];
-    let stdout = "";
-    env.print = (data) => {
-        stdout += data + "\n";
-    }
-    env.postRun = [
-      async (m) => {
-        resolve(stdout)
-      }
-    ]
-    env.arguments = ["-D", "file.elf"]
-    callObjdump(env)
-  })
+  const env = { noInitialRun: true };
+  let stdout = "";
+  env.print = (data) => { stdout += data + "\n"; };
+
+  const m = await callObjdump(env);
+  m.FS.writeFile("file.elf", elf);
+
+  try {
+    m.callMain(["-D", "file.elf"]);
+  } catch(e) {
+    return stdout;
+  }
+
+  return stdout;
 }
 
 async function dump_as_hex(elf) {
-  return new Promise((resolve) => {
-    const env = {}
-    env.preRun = [
-      (m) => {
-        m.FS.writeFile("file.elf", elf)
-      }
-    ];
-    let stdout = "";
-    env.print = (data) => {
-        stdout += data + "\n";
-    }
-    env.postRun = [
-      async (m) => {
-        resolve(stdout)
-      }
-    ]
-    env.arguments = ["-s", "file.elf"]
-    callObjdump(env)
-  })
+  const env = { noInitialRun: true };
+  let stdout = "";
+  env.print = (data) => { stdout += data + "\n"; };
+
+  const m = await callObjdump(env);
+  m.FS.writeFile("file.elf", elf);
+
+  try {
+    m.callMain(["-s", "file.elf"]);
+  } catch(e) {
+    return stdout;
+  }
+
+  return stdout;
 }
 
 async function getBinaryText(elf) {
-  return new Promise((resolve) => {
-    const env = {}
-    env.preRun = [
-      (m) => {
-        m.FS.writeFile("file.elf", elf)
-      }
-    ];
-    env.postRun = [
-      async (m) => {
-        const data = await m.FS.readFile("file.bin")
-        resolve(data)
-      }
-    ]
-    env.arguments = ["-O", "binary", "file.elf", "file.bin", "--only-section", ".text*"]
-    callObjcopy(env)
-  })
+  const env = { noInitialRun: true };
+  let stdout = "";
+  env.print = (data) => { stdout += data + "\n"; };
+
+  const m = await callObjcopy(env);
+  m.FS.writeFile("file.elf", elf);
+
+  try {
+    m.callMain(["-O", "binary", "file.elf", "file.bin", "--only-section", ".text*"]);
+  } catch(e) {}
+
+  return m.FS.readFile("file.bin");
 }
 
 async function getBinaryData(elf) {
-  return new Promise((resolve) => {
-    const env = {}
-    env.preRun = [
-      (m) => {
-        m.FS.writeFile("file.elf", elf)
-      }
-    ];
-    env.postRun = [
-      async (m) => {
-        const data = await m.FS.readFile("file.bin")
-        resolve(data)
-      }
-    ]
-    env.arguments = ["-O", "binary", "file.elf", "file.bin", "--only-section", ".data*"]
-    callObjcopy(env)
-  })
+  const env = { noInitialRun: true };
+  let stdout = "";
+  env.print = (data) => { stdout += data + "\n"; };
+
+  const m = await callObjcopy(env);
+  m.FS.writeFile("file.elf", elf);
+
+  try {
+    m.callMain(["-O", "binary", "file.elf", "file.bin", "--only-section", ".data*"]);
+  } catch(e) {}
+
+  return m.FS.readFile("file.bin");
 }
 
 function selectBinaryBox() {

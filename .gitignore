@@ -1,1 +1,4 @@
-temp
+temp/
+build/
+bins/
+binutils-*/

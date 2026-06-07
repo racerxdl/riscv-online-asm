@@ -156,10 +156,6 @@ variable:
     <script data-main="js/app" src="js/require.js" async></script>
     <script type="text/javascript" src="js/materialize.min.js" async></script>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
-    <link rel="preload" href="js/as-new.wasm" as="script" crossorigin="anonymous">
-    <link rel="preload" href="js/objcopy.wasm" as="script" crossorigin="anonymous">
-    <link rel="preload" href="js/objdump.wasm" as="script" crossorigin="anonymous">
-    <link rel="preload" href="js/ld-new.wasm" as="script" crossorigin="anonymous">
     <script>
         $( document ).ready(() => {
             $('i[rel="pre"]').replaceWith(function() {
@@ -187,10 +183,15 @@ variable:
                 theme:"dracula",
                 mode: {name: "gas", architecture: "riscv"},
             });
+
+            if (!['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+                const script = document.createElement('script');
+                script.defer = true;
+                script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+                script.dataset.cfBeacon = '{"token": "6fdff3f05d2847b58d553381bb1e8115"}';
+                document.body.appendChild(script);
+            }
         })
     </script>
-    <!-- Cloudflare Web Analytics -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6fdff3f05d2847b58d553381bb1e8115"}'></script>
-    <!-- End Cloudflare Web Analytics -->
 </body>
 </html>
