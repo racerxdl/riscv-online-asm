@@ -263,7 +263,20 @@ async function updateBinutilsVersion() {
 }
 
 function triggerBuild() {
-  buildStuff(window.editor.getValue(), window.ldeditor.getValue(), getAssemblerSettings());
+  const code = window.editor.getValue();
+  const ld = window.ldeditor.getValue();
+
+  if (!code.trim()) {
+    $("#output").html('<span style="color: red">Assembly code is empty</span>');
+    return;
+  }
+
+  if (!ld.trim()) {
+    $("#output").html('<span style="color: red">Linker script is empty</span>');
+    return;
+  }
+
+  buildStuff(code, ld, getAssemblerSettings());
 }
 
 function selectBinaryBox() {
