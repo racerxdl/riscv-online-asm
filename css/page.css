@@ -233,6 +233,23 @@ pre.code {
     font-size: 14px;
 }
 
+kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    margin: 0 2px;
+    border-radius: 8px;
+    border: 1px solid rgba(124, 176, 193, 0.28);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    font-family: "Droid Sans Mono", monospace;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
 .build-btn.btn {
     display: inline-flex;
     align-items: center;
@@ -316,11 +333,43 @@ pre.code label {
 pre.code code {
     display: block;
     margin: 0 0 0 128px;
-    padding: 20px 22px;
+    padding: 52px 22px 20px;
     overflow-x: auto;
     font-size: 13px;
     line-height: 1.6;
     color: #d7f7ff;
+}
+
+.result-copy {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    border: 1px solid rgba(124, 176, 193, 0.28);
+    border-radius: 999px;
+    background: rgba(11, 16, 22, 0.78);
+    color: var(--text-muted);
+    min-height: 34px;
+    padding: 0 14px;
+    font-family: "Orbitron", "Droid Sans", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 160ms ease;
+}
+
+.result-copy:hover,
+.result-copy:focus {
+    color: var(--text);
+    border-color: var(--border-strong);
+    background: rgba(80, 227, 194, 0.12);
+}
+
+.result-copy.is-copied {
+    color: #041015;
+    background: linear-gradient(135deg, var(--accent) 0%, #7af6dc 100%);
+    border-color: transparent;
 }
 
 pre.code-res code {
@@ -406,6 +455,11 @@ pre.code-res code {
     pre.code code {
         margin: 0;
         padding: 14px 18px 18px;
+    }
+
+    .result-copy {
+        top: 12px;
+        right: 12px;
     }
 
     .CodeMirror {

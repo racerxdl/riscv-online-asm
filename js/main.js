@@ -143,6 +143,38 @@ async function getBinaryData(elf) {
   return m.FS.readFile("file.bin");
 }
 
+async function getBinutilsVersion() {
+  const env = { noInitialRun: true };
+  let stdout = "";
+  env.print = (data) => { stdout += data + "\n"; };
+  env.printErr = (data) => { stdout += data + "\n"; };
+
+  const m = await callAS(env);
+
+  try {
+    m.callMain(["--version"]);
+  } catch (e) {
+    // Some tool builds exit through exceptions after printing output.
+  }
+
+  const firstLine = stdout.trim().split("\n")[0] || "";
+  const match = firstLine.match(/(\d+\.\d+(?:\.\d+)?)/);
+  return match ? match[1] : firstLine || "Unknown";
+}
+
+async function updateBinutilsVersion() {
+  const el = document.getElementById("binutilsVersion");
+  if (!el) {
+    return;
+  }
+
+  try {
+    el.textContent = await getBinutilsVersion();
+  } catch (err) {
+    el.textContent = "Unknown";
+  }
+}
+
 function selectBinaryBox() {
   if (document.selection) { // IE
       var range = document.body.createTextRange();
@@ -175,6 +207,42 @@ function _arrayBufferToBase64( buffer ) {
         binary += String.fromCharCode( bytes[ i ] );
     }
     return window.btoa( binary );
+}
+
+async function copyResult(id, button) {
+  const el = document.getElementById(id);
+  if (!el) {
+    return;
+  }
+
+  const text = el.textContent || '';
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+    }
+
+    if (button) {
+      const original = button.dataset.label || button.textContent;
+      button.dataset.label = original;
+      button.textContent = 'Copied';
+      button.classList.add('is-copied');
+      window.setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('is-copied');
+      }, 1400);
+    }
+  } catch (err) {
+    console.error('Copy failed', err);
+  }
 }
 
 async function doAssemble(code, ldscript) {
@@ -213,6 +281,17 @@ async function buildStuff(code, ldscript) {
 async function main(require) {
   window.require = require;
   window.doAssemble = doAssemble;
+  window.buildStuff = buildStuff;
+  window.copyResult = copyResult;
+  window.updateBinutilsVersion = updateBinutilsVersion;
+
+  document.addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      buildStuff(window.editor.getValue(), window.ldeditor.getValue());
+    }
+  });
+
 }
 
 define(main)

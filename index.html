@@ -60,6 +60,10 @@
                     <span class="status-value">gas → ld → objdump → objcopy</span>
                 </div>
                 <div class="status-card">
+                    <span class="status-label">Binutils</span>
+                    <span class="status-value" id="binutilsVersion">Detecting...</span>
+                </div>
+                <div class="status-card">
                     <span class="status-label">Target</span>
                     <span class="status-value">riscv64-linux-gnu</span>
                 </div>
@@ -159,7 +163,7 @@ variable:
         <div class="action-row">
             <div class="action-copy">
                 <strong>Build current workspace</strong>
-                <span>Runs the full browser-side toolchain and refreshes all result panes below.</span>
+                <span>Runs the full browser-side toolchain and refreshes all result panes below. Use <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Enter</kbd> to build.</span>
             </div>
             <a href="#" class="btn build-btn" onClick="buildStuff(window.editor.getValue(), window.ldeditor.getValue())">Build</a>
         </div>
@@ -170,17 +174,18 @@ variable:
                 </div>
             </div>
             <div class="results-grid">
-                <pre class="code code-res"><label>Console</label><code id="output">Waiting for build</code></pre>
-                <pre class="code code-res compact-result"><label>Code<BR/>Hex Dump</label><code id="binaryBox">Waiting for build</code></pre>
-                <pre class="code code-res compact-result"><label>Data<BR/>Hex Dump</label><code id="binaryDataBox">Waiting for build</code></pre>
-                <pre class="code code-res wide-result"><label>Objdump Code<BR/>Disassembly</label><code id="objDumpBox">Waiting for build</code></pre>
-                <pre class="code code-res wide-result"><label>Objdump<BR/>Full Hex</label><code id="objDumpFullBox">Waiting for build</code></pre>
+                <pre class="code code-res"><label>Console</label><button type="button" class="result-copy" onClick="copyResult('output', this)">Copy</button><code id="output">Waiting for build</code></pre>
+                <pre class="code code-res compact-result"><label>Code<BR/>Hex Dump</label><button type="button" class="result-copy" onClick="copyResult('binaryBox', this)">Copy</button><code id="binaryBox">Waiting for build</code></pre>
+                <pre class="code code-res compact-result"><label>Data<BR/>Hex Dump</label><button type="button" class="result-copy" onClick="copyResult('binaryDataBox', this)">Copy</button><code id="binaryDataBox">Waiting for build</code></pre>
+                <pre class="code code-res wide-result"><label>Objdump Code<BR/>Disassembly</label><button type="button" class="result-copy" onClick="copyResult('objDumpBox', this)">Copy</button><code id="objDumpBox">Waiting for build</code></pre>
+                <pre class="code code-res wide-result"><label>Objdump<BR/>Full Hex</label><button type="button" class="result-copy" onClick="copyResult('objDumpFullBox', this)">Copy</button><code id="objDumpFullBox">Waiting for build</code></pre>
             </div>
           </div>
     </div>
     </div>
 
     <!--JavaScript at end of body for optimized loading-->
+    <link rel="preload" href="js/as-new.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
     <script data-main="js/app" src="js/require.js" async></script>
     <script type="text/javascript" src="js/materialize.min.js" async></script>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
@@ -211,6 +216,21 @@ variable:
                 theme:"dracula",
                 mode: {name: "gas", architecture: "riscv"},
             });
+
+            const updateVersionWhenReady = () => {
+                if (window.updateBinutilsVersion && window.doAssemble) {
+                    window.updateBinutilsVersion();
+                    return;
+                }
+
+                window.requestAnimationFrame(updateVersionWhenReady);
+            };
+
+            if (document.readyState === 'complete') {
+                updateVersionWhenReady();
+            } else {
+                window.addEventListener('load', updateVersionWhenReady, { once: true });
+            }
 
             if (!['localhost', '127.0.0.1'].includes(window.location.hostname)) {
                 const script = document.createElement('script');
