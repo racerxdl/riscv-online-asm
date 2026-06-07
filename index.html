@@ -69,6 +69,56 @@
                 </div>
             </div>
         </header>
+        <section class="panel toolchain-panel">
+            <div class="panel-header">
+                <div>
+                    <h2>ISA Controls</h2>
+                    <p>Configure the assembler architecture string passed to GNU <code>as</code>.</p>
+                </div>
+            </div>
+            <div class="toolchain-grid">
+                <label class="control-field">
+                    <span>Base ISA</span>
+                    <select id="archBase" class="browser-default" onchange="updateAssemblerPreview()">
+                        <option value="rv32i">rv32i</option>
+                        <option value="rv32im">rv32im</option>
+                        <option value="rv32gc">rv32gc</option>
+                        <option value="rv64i">rv64i</option>
+                        <option value="rv64im">rv64im</option>
+                        <option value="rv64gc" selected>rv64gc</option>
+                    </select>
+                </label>
+                <label class="control-field">
+                    <span>ABI</span>
+                    <select id="archAbi" class="browser-default" onchange="updateAssemblerPreview()">
+                        <option value="ilp32">ilp32</option>
+                        <option value="ilp32f">ilp32f</option>
+                        <option value="ilp32d">ilp32d</option>
+                        <option value="lp64">lp64</option>
+                        <option value="lp64f">lp64f</option>
+                        <option value="lp64d" selected>lp64d</option>
+                    </select>
+                </label>
+                <label class="control-field control-field-wide">
+                    <span>Advanced extensions</span>
+                    <input id="archExtra" type="text" placeholder="zba zbb zicsr" autocomplete="off" oninput="updateAssemblerPreview()">
+                </label>
+                <div class="toggle-group">
+                    <label class="toggle-chip">
+                        <input id="extHypervisor" type="checkbox" onchange="updateAssemblerPreview()">
+                        <span>Hypervisor (h)</span>
+                    </label>
+                    <label class="toggle-chip">
+                        <input id="extVector" type="checkbox" onchange="updateAssemblerPreview()">
+                        <span>Vector (v)</span>
+                    </label>
+                </div>
+                <div class="toolchain-summary">
+                    <span class="status-label">Effective flags</span>
+                    <code id="archPreview">-march=rv64gc -mabi=lp64d</code>
+                </div>
+            </div>
+        </section>
         <div class="workspace-grid">
           <section class="panel editor-panel">
             <div class="panel-header">
@@ -165,7 +215,7 @@ variable:
                 <strong>Build current workspace</strong>
                 <span>Runs the full browser-side toolchain and refreshes all result panes below. Use <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Enter</kbd> to build.</span>
             </div>
-            <a href="#" class="btn build-btn" onClick="buildStuff(window.editor.getValue(), window.ldeditor.getValue())">Build</a>
+            <a href="#" class="btn build-btn" onClick="triggerBuild()">Build</a>
         </div>
             <div class="container panel build-panel" id="building">
                 <p>Please wait while building</p>

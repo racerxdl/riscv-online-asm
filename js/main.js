@@ -30,7 +30,86 @@ async function callLd(env) {
   return Module(withModuleDefaults(env));
 }
 
-async function assemble(code) {
+const SINGLE_LETTER_EXTENSION_ORDER = "iemafdqlcbkjtpvnh";
+
+function normalizeExtensionTokens(extraText) {
+  return extraText
+    .split(/[\s,]+/)
+    .flatMap((part) => part.split('_'))
+    .map((token) => token.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function buildMarch(baseIsa, toggledExtensions, extraText) {
+  let march = (baseIsa || "rv64gc").trim().toLowerCase();
+  const singleLetter = new Set();
+  const longExtensions = [];
+
+  for (const token of [...toggledExtensions, ...normalizeExtensionTokens(extraText || "")]) {
+    if (/^[a-z]$/.test(token)) {
+      singleLetter.add(token);
+      continue;
+    }
+
+    if (!longExtensions.includes(token)) {
+      longExtensions.push(token);
+    }
+  }
+
+  for (const ext of SINGLE_LETTER_EXTENSION_ORDER) {
+    if (singleLetter.has(ext) && !march.includes(ext)) {
+      march += ext;
+    }
+  }
+
+  if (longExtensions.length > 0) {
+    march += `_${longExtensions.join('_')}`;
+  }
+
+  return march;
+}
+
+function getAssemblerSettings() {
+  const baseIsa = document.getElementById("archBase")?.value || "rv64gc";
+  const abi = document.getElementById("archAbi")?.value || "lp64d";
+  const extraText = document.getElementById("archExtra")?.value || "";
+  const toggledExtensions = [];
+
+  if (document.getElementById("extHypervisor")?.checked) {
+    toggledExtensions.push("h");
+  }
+
+  if (document.getElementById("extVector")?.checked) {
+    toggledExtensions.push("v");
+  }
+
+  return {
+    march: buildMarch(baseIsa, toggledExtensions, extraText),
+    abi,
+  };
+}
+
+function updateAssemblerPreview() {
+  const preview = document.getElementById("archPreview");
+  if (!preview) {
+    return;
+  }
+
+  const settings = getAssemblerSettings();
+  preview.textContent = `-march=${settings.march} -mabi=${settings.abi}`;
+}
+
+function getAssemblerArgs(sourceFile, outputFile, settings) {
+  return [
+    `-march=${settings.march}`,
+    `-mabi=${settings.abi}`,
+    sourceFile,
+    "-o",
+    outputFile,
+  ];
+}
+
+async function assemble(code, settings) {
   console.log(`Assembling:\n${code}`);
   const env = { noInitialRun: true };
   let out = "";
@@ -41,7 +120,7 @@ async function assemble(code) {
   m.FS.writeFile("file.s", code);
 
   try {
-    m.callMain(["file.s", "-o", "file.o"]);
+    m.callMain(getAssemblerArgs("file.s", "file.o", settings));
   } catch(e) {
     throw out || e;
   }
@@ -175,6 +254,10 @@ async function updateBinutilsVersion() {
   }
 }
 
+function triggerBuild() {
+  buildStuff(window.editor.getValue(), window.ldeditor.getValue(), getAssemblerSettings());
+}
+
 function selectBinaryBox() {
   if (document.selection) { // IE
       var range = document.body.createTextRange();
@@ -245,8 +328,8 @@ async function copyResult(id, button) {
   }
 }
 
-async function doAssemble(code, ldscript) {
-  const object = await assemble(code);
+async function doAssemble(code, ldscript, settings) {
+  const object = await assemble(code, settings);
   const elf = await link(object, ldscript)
   const data = await dump(elf);
   const full_hex = await dump_as_hex(elf);
@@ -263,10 +346,10 @@ async function doAssemble(code, ldscript) {
   }
 }
 
-async function buildStuff(code, ldscript) {
+async function buildStuff(code, ldscript, settings = getAssemblerSettings()) {
   try {
     $("#building").show();
-    const l = await doAssemble(code, ldscript);
+    const l = await doAssemble(code, ldscript, settings);
     $("#binaryBox").html(l.hex);
     $("#objDumpBox").html(l.data);
     $("#objDumpFullBox").html(l.full_hex);
@@ -284,13 +367,22 @@ async function main(require) {
   window.buildStuff = buildStuff;
   window.copyResult = copyResult;
   window.updateBinutilsVersion = updateBinutilsVersion;
+  window.triggerBuild = triggerBuild;
+  window.updateAssemblerPreview = updateAssemblerPreview;
 
   document.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
       event.preventDefault();
-      buildStuff(window.editor.getValue(), window.ldeditor.getValue());
+      triggerBuild();
     }
   });
+
+  ["archBase", "archAbi", "archExtra", "extHypervisor", "extVector"].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', updateAssemblerPreview);
+    document.getElementById(id)?.addEventListener('change', updateAssemblerPreview);
+  });
+
+  updateAssemblerPreview();
 
 }
 
