@@ -56,9 +56,12 @@ function buildMarch(baseIsa, toggledExtensions, extraText) {
     }
   }
 
+  let extensionsOnly = march.replace(/^rv\d+/, '');
+
   for (const ext of SINGLE_LETTER_EXTENSION_ORDER) {
-    if (singleLetter.has(ext) && !march.includes(ext)) {
+    if (singleLetter.has(ext) && !extensionsOnly.includes(ext)) {
       march += ext;
+      extensionsOnly += ext;
     }
   }
 
