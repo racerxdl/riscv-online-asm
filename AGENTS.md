@@ -31,3 +31,4 @@ Do NOT modify `.wasm` files or JS glue without rebuilding via `./build.sh`.
 - Third-party CSS/JS files (materialize, codemirror, dracula theme) are vendored — do not edit
 - `CNAME` controls the GitHub Pages custom domain
 - `temp/` is gitignored
+- Local assets use `?v=YYYYMMDD` cache-busting in `index.html`. Bump the version string when deploying JS/CSS changes (it appears on static `<link>`/`<script>` tags and in the RequireJS `urlArgs` config)
