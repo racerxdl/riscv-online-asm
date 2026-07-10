@@ -476,6 +476,14 @@ pre.code-res code {
 #output {
     color: var(--accent);
 }
+.cite-panel {
+    margin-top: 20px;
+}
+
+.cite-block code {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
 
 #content {
     display: none;

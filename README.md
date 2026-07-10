@@ -40,3 +40,17 @@ cp ../bins/usr/local/bin/riscv64-linux-gnu-objcopy ../js/riscv64-linux-gnu-objco
 cp ../bins/usr/local/bin/riscv64-linux-gnu-objdump ../js/riscv64-linux-gnu-objdump.js
 cp ../bins/usr/local/bin/riscv64-linux-gnu-ld ../js/riscv64-linux-gnu-ld.js
 ```
+
+## Citation
+
+If this tool helped your research or teaching, a citation is appreciated.
+
+```bibtex
+@misc{teske2026riscvasm,
+  title={RISC-V Online Assembler},
+  author={Teske, Lucas},
+  year={2026},
+  howpublished={\url{https://riscvasm.lucasteske.dev/}},
+  note={Browser-based RISC-V assembler powered by a WebAssembly build of GNU binutils. Source: https://github.com/racerxdl/riscv-online-asm. ORCID: 0009-0002-8526-7662}
+}
+```

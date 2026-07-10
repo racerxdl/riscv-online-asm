@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&display=swap">
     <link rel="stylesheet" type="text/css" href="css/materialize.min.css" media="screen,projection"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/page.css?v=20260620" />
-    <link rel="stylesheet" type="text/css" href="css/codemirror.css?v=20260620" />
-    <link rel="stylesheet" type="text/css" href="css/dracula.css?v=20260620" />
-    <script type="text/javascript" src="js/codemirror.js?v=20260620"></script>
-    <script type="text/javascript" src="js/gas.js?v=20260620"></script>
+    <link rel="stylesheet" type="text/css" href="css/page.css?v=20260710" />
+    <link rel="stylesheet" type="text/css" href="css/codemirror.css?v=20260710" />
+    <link rel="stylesheet" type="text/css" href="css/dracula.css?v=20260710" />
+    <script type="text/javascript" src="js/codemirror.js?v=20260710"></script>
+    <script type="text/javascript" src="js/gas.js?v=20260710"></script>
     <title>Online RISC-V Assembler</title>
     <!-- Global -->
     <link rel="canonical" href="https://riscvasm.lucasteske.dev/">
@@ -234,14 +234,29 @@ variable:
                 <pre class="code code-res wide-result"><label>Objdump Code<BR/>Disassembly</label><button type="button" class="result-copy" onClick="copyResult('objDumpBox', this)">Copy</button><code id="objDumpBox">Waiting for build</code></pre>
                 <pre class="code code-res wide-result"><label>Objdump<BR/>Full Hex</label><button type="button" class="result-copy" onClick="copyResult('objDumpFullBox', this)">Copy</button><code id="objDumpFullBox">Waiting for build</code></pre>
             </div>
+        <section class="panel cite-panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Cite this tool</h2>
+                    <p>If RISC-V Online Assembler helped your research or teaching, a citation is appreciated.</p>
+                </div>
+            </div>
+            <pre class="code cite-block"><label>BibTeX</label><button type="button" class="result-copy" onClick="copyResult('citationBox', this)">Copy</button><code id="citationBox">@misc{teske2026riscvasm,
+  title={RISC-V Online Assembler},
+  author={Teske, Lucas},
+  year={2026},
+  howpublished={\url{https://riscvasm.lucasteske.dev/}},
+  note={Browser-based RISC-V assembler powered by a WebAssembly build of GNU binutils. Source: https://github.com/racerxdl/riscv-online-asm. ORCID: 0009-0002-8526-7662}
+}</code></pre>
+        </section>
           </div>
     </div>
     </div>
 
     <!--JavaScript at end of body for optimized loading-->
     <link rel="preload" href="js/as-new.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
-    <script>window.require = { urlArgs: "v=20260620" };</script>
-    <script data-main="js/app" src="js/require.js?v=20260620" async></script>
+    <script>window.require = { urlArgs: "v=20260710" };</script>
+    <script data-main="js/app" src="js/require.js?v=20260710" async></script>
     <script type="text/javascript" src="js/materialize.min.js" async></script>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
     <script>
