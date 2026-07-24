@@ -1,5 +1,10 @@
 # RISC-V Online Assembler
 
+[![DOI](https://zenodo.org/badge/416230404.svg)](https://doi.org/10.5281/zenodo.21526002)
+[![GitHub Release](https://img.shields.io/github/v/release/racerxdl/riscv-online-asm)](https://github.com/racerxdl/riscv-online-asm/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-live-50E3C2)](https://riscvasm.lucasteske.dev/)
+
 Online assembler for RISC-V assembly (all variants that gas supports).
 
 It uses a WebAssembly-compiled version of GNU as, objdump and objcopy to build the assembly.
