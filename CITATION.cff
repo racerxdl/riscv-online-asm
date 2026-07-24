@@ -1,0 +1,23 @@
+cff-version: "1.2.0"
+message: "If you use this software, please cite it using these metadata."
+title: "RISC-V Online Assembler"
+type: software
+authors:
+  - given-names: Lucas
+    family-names: Teske
+    orcid: "https://orcid.org/0009-0002-8526-7662"
+abstract: >-
+  Browser-based RISC-V assembler powered by a WebAssembly build of GNU binutils.
+  Assemble, link, inspect sections, and extract text/data binaries directly in
+  the browser using gas, ld, objdump, and objcopy.
+keywords:
+  - RISC-V
+  - assembler
+  - WebAssembly
+  - GNU binutils
+license: MIT
+version: "1.0.0"
+date-released: "2026-07-24"
+doi: "10.5281/zenodo.21526003"
+repository-code: "https://github.com/racerxdl/riscv-online-asm"
+url: "https://riscvasm.lucasteske.dev/"
