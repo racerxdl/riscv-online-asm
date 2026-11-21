@@ -5,12 +5,12 @@ Static site deployed via GitHub Pages at riscvasm.lucasteske.dev. No build step,
 ## Architecture
 
 - `index.html` — single page entrypoint
-- `js/main.js` — core logic: assembles RISC-V asm in-browser via WebAssembly-compiled binutils (gas, ld, objcopy, objdump)
-- `js/app.js` — RequireJS bootstrap that loads `main.js`
+- `js/workbench.js` — editor, settings, output views, and local workspace persistence
+- `js/build-worker.js` — runs WebAssembly-compiled binutils (gas, ld, objcopy, objdump) off the main thread; loads modules with RequireJS
 - `js/*.js` (riscv64-linux-gnu-*) — Emscripten-generated JS glue for WASM modules
 - `js/*.wasm` — WebAssembly binaries (as-new, ld-new, objcopy, objdump)
 - `js/codemirror.js`, `js/gas.js` — CodeMirror editor with GAS syntax mode
-- `css/page.css` — custom styles; `css/materialize.min.css`, `css/codemirror.css`, `css/dracula.css` are third-party
+- `css/tokens.css`, `css/components.css`, `css/workbench.css` — custom styles; `css/materialize.min.css`, `css/codemirror.css`, `css/dracula.css` are third-party
 
 ## WASM Toolchain Rebuild
 
@@ -26,8 +26,7 @@ Do NOT modify `.wasm` files or JS glue without rebuilding via `./build.sh`.
 
 ## Conventions
 
-- No framework, no bundler — plain JS loaded via RequireJS (`require.js`)
-- jQuery loaded from CDN, not local
+- No framework, no bundler — plain JS in the page; RequireJS (`require.js`) loads binutils modules in the worker
 - Third-party CSS/JS files (materialize, codemirror, dracula theme) are vendored — do not edit
 - `CNAME` controls the GitHub Pages custom domain
 - `temp/` is gitignored
